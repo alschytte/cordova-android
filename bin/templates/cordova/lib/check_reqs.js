@@ -114,9 +114,14 @@ module.exports.get_gradle_wrapper = function () {
 
     if (androidStudioPath !== null && fs.existsSync(androidStudioPath)) {
         var dirs = fs.readdirSync(androidStudioPath);
-        if (dirs[0].split('-')[0] === 'gradle') {
-            return path.join(androidStudioPath, dirs[0], 'bin', 'gradle');
-        }
+        var gradledir;
+          dirs.forEach((dir) => {
+            if (dir.split('-')[0] === 'gradle')
+                gradledir = path.join(androidStudioPath, dir, 'bin', 'gradle');
+          });
+         if (!gradledir)
+            throw new CordovaError('Could not find a version of gradle in Android Studio');
+         return gradledir;
     } else {
         // OK, let's try to check for Gradle!
         return forgivingWhichSync('gradle');
